@@ -1,4 +1,4 @@
-#include <Wire.h> //Подключаем библиотеку для использования I2C интерфейса с модулем RTC 
+#include <Wire.h> //Подключаем библиотеку для использования I2C интерфейса с модулем RTC
 #include <avr/wdt.h> //Библиотека для работы со сторожевым таймером
 
 #include <OneWire.h>
@@ -17,10 +17,10 @@ LiquidCrystal_I2C lcd(0x27, 20, 4);
 
 int PWM_LW_MIN = 0; //Если необходим ток покоя на LED - изменить эту константу
 int PWM_LW_MAX = 250; //Если необходимо ограничить максимальную яркость - уменьшить значение
-#define PWM_LW_PIN 3 //Пин порта, где будет ШИМ LW 
+#define PWM_LW_PIN 3 //Пин порта, где будет ШИМ LW
 
-#define mn 60UL //Дополнительные константы для удобства 
-#define hr 3600UL //Отражают соответствующие количества секунд 
+#define mn 60UL //Дополнительные константы для удобства
+#define hr 3600UL //Отражают соответствующие количества секунд
 #define d 86400UL
 
 RTC_DS1307 RTC;
@@ -93,6 +93,11 @@ void loop() // ПРОГРАММЫй безусловный ЦИКЛ
   long pwm_LW;
   DateTime myTime = RTC.now(); //Читаем данные времени из RTC при каждом выполнении цикла
   long Day_time = myTime.unixtime() % 86400; //сохраняем в переменную - время в формате UNIX
+
+  int hourToSet = myTime.hour();
+  int minuteToSet = myTime.minute();
+  int timeAdjMode = 0; // 0 = меняем минуты, 1 = меняем часы
+
   if ((Day_time < sunrise_start) || //Если с начала суток меньше чем начало восхода
       (Day_time >= sunset_start + sunset_duration)) { //Или больше чем начало заката + длительность
     pwm_LW = PWM_LW_MIN; //Величина для записи в порт равна минимуму
@@ -145,7 +150,7 @@ void loop() // ПРОГРАММЫй безусловный ЦИКЛ
   }
 
 
-  if (pos == 11 || pos > 11) {
+  if (pos >= 12) {
     lcd.clear();
     pos = 1;
   }
@@ -559,6 +564,49 @@ void loop() // ПРОГРАММЫй безусловный ЦИКЛ
         lcd.clear();
         pos = 1;
       }
+      break;
+
+    case 11:
+      //lcd.clear();
+      lcd.setCursor(0, 0);
+      lcd.print("SET TIME");
+      lcd.setCursor(0, 1);
+      if (hourToSet < 10) lcd.print("0");
+      lcd.print(hourToSet, DEC);
+      lcd.print(":");
+      if (minuteToSet < 10) lcd.print("0");
+      lcd.print(minuteToSet, DEC);
+
+      buttonState3 = digitalRead(buttonPin3);
+      if (buttonState3 == HIGH) {
+        if (timeAdjMode == 0) {
+          minuteToSet++;
+          if (minuteToSet >= 60) {
+            minuteToSet = 0;
+          }
+        } else {
+          hourToSet++;
+          if (hourToSet >= 24) {
+            hourToSet = 0;
+          }
+        }
+
+        delay(100);
+      }
+
+      buttonState2 = digitalRead(buttonPin2);
+      if (buttonState2 == HIGH) {
+        if (timeAdjMode == 0) {
+          timeAdjMode = 1;
+        } else {
+          timeAdjMode = 0;
+        }
+
+        delay(100);
+      }
+
+      RTC.adjust(DateTime(myTime.year(), myTime.month(), myTime.day(), hourToSet, minuteToSet, 0));
+
       break;
   }
   //delay (100);
