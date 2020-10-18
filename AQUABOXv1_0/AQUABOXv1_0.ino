@@ -567,12 +567,12 @@ void loop() // ПРОГРАММЫй безусловный ЦИКЛ
     case 13: // День
     case 14: // Месяц
     case 15: // Год
-      int ms = millis() % 1000;
+      int ms = millis() % 500;
       lcd.setCursor(0, 0);
       lcd.print("DATE:");
 
       lcd.setCursor(6, 0);
-      if (pos == 13 && (ms > 900 || (ms > 400 && ms < 500))) {
+      if (pos == 13 && (ms > 400)) {
         lcd.print("  ");
       } else {
         if (myTime.day() < 10) lcd.print("0");
@@ -580,7 +580,7 @@ void loop() // ПРОГРАММЫй безусловный ЦИКЛ
       }
       lcd.print("/");
 
-      if (pos == 14 && (ms > 900 || (ms > 400 && ms < 500))) {
+      if (pos == 14 && (ms > 400)) {
         lcd.print("  ");
       } else {
         if (myTime.month() < 10) lcd.print("0");
@@ -588,14 +588,14 @@ void loop() // ПРОГРАММЫй безусловный ЦИКЛ
       }
       lcd.print("/");
 
-      if (pos == 15 && (ms > 900 || (ms > 400 && ms < 500))) {
+      if (pos == 15 && (ms > 400)) {
         lcd.print("    ");
       } else {
         lcd.print(myTime.year(), DEC);
       }
 
       lcd.setCursor(0, 1);
-      if (pos == 11 && (ms > 900 || (ms > 400 && ms < 500))) {
+      if (pos == 11 && (ms > 400)) {
         lcd.print("  ");
       } else {
         if (myTime.hour() < 10) lcd.print("0");
@@ -603,7 +603,7 @@ void loop() // ПРОГРАММЫй безусловный ЦИКЛ
       }
       lcd.print(":");
 
-      if (pos == 12 && (ms > 900 || (ms > 400 && ms < 500))) {
+      if (pos == 12 && (ms > 400)) {
         lcd.print("  ");
       } else {
         if (myTime.minute() < 10) lcd.print("0");
