@@ -172,7 +172,7 @@ void loop() // ПРОГРАММЫй безусловный ЦИКЛ
       if (myTime.hour() < 10) lcd.print("0");
       lcd.print(myTime.hour(), DEC);
       lcd.print(":");
-      if (myTime.minute() < 10) lcd.print("1");
+      if (myTime.minute() < 10) lcd.print("0");
       lcd.print(myTime.minute(), DEC);
       break;
 
