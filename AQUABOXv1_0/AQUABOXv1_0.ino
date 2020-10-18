@@ -73,7 +73,7 @@ void setup() {
 
   if (! RTC.isrunning()) {
     Serial.println("RTC is NOT running!");
-    RTC.adjust(DateTime(2014, 7, 12, 22, 48, 1));
+    RTC.adjust(DateTime(2020, 1, 1, 12, 0, 0));
   }
   //RTC.adjust(DateTime(2012, 7, 31, 21, 53, 1));
   //RTC.adjust(DateTime(__DATE__, __TIME__));
@@ -93,10 +93,6 @@ void loop() // ПРОГРАММЫй безусловный ЦИКЛ
   long pwm_LW;
   DateTime myTime = RTC.now(); //Читаем данные времени из RTC при каждом выполнении цикла
   long Day_time = myTime.unixtime() % 86400; //сохраняем в переменную - время в формате UNIX
-
-  int hourToSet = myTime.hour();
-  int minuteToSet = myTime.minute();
-  int timeAdjMode = 0; // 0 = меняем минуты, 1 = меняем часы
 
   if ((Day_time < sunrise_start) || //Если с начала суток меньше чем начало восхода
       (Day_time >= sunset_start + sunset_duration)) { //Или больше чем начало заката + длительность
@@ -150,7 +146,7 @@ void loop() // ПРОГРАММЫй безусловный ЦИКЛ
   }
 
 
-  if (pos >= 12) {
+  if (pos >= 16) {
     lcd.clear();
     pos = 1;
   }
@@ -566,29 +562,81 @@ void loop() // ПРОГРАММЫй безусловный ЦИКЛ
       }
       break;
 
-    case 11:
-      //lcd.clear();
+    case 11: // Часы
+    case 12: // Минуты
+    case 13: // День
+    case 14: // Месяц
+    case 15: // Год
+      int ms = millis() % 1000;
       lcd.setCursor(0, 0);
-      lcd.print("SET TIME");
+      lcd.print("DATE:");
+
+      lcd.setCursor(6, 0);
+      if (pos == 13 && (ms > 900 || (ms > 400 && ms < 500))) {
+        lcd.print("  ");
+      } else {
+        if (myTime.day() < 10) lcd.print("0");
+        lcd.print(myTime.day(), DEC);
+      }
+      lcd.print("/");
+
+      if (pos == 14 && (ms > 900 || (ms > 400 && ms < 500))) {
+        lcd.print("  ");
+      } else {
+        if (myTime.month() < 10) lcd.print("0");
+        lcd.print(myTime.month(), DEC);
+      }
+      lcd.print("/");
+
+      if (pos == 15 && (ms > 900 || (ms > 400 && ms < 500))) {
+        lcd.print("    ");
+      } else {
+        lcd.print(myTime.year(), DEC);
+      }
+
       lcd.setCursor(0, 1);
-      if (hourToSet < 10) lcd.print("0");
-      lcd.print(hourToSet, DEC);
+      if (pos == 11 && (ms > 900 || (ms > 400 && ms < 500))) {
+        lcd.print("  ");
+      } else {
+        if (myTime.hour() < 10) lcd.print("0");
+        lcd.print(myTime.hour(), DEC);
+      }
       lcd.print(":");
-      if (minuteToSet < 10) lcd.print("0");
-      lcd.print(minuteToSet, DEC);
+
+      if (pos == 12 && (ms > 900 || (ms > 400 && ms < 500))) {
+        lcd.print("  ");
+      } else {
+        if (myTime.minute() < 10) lcd.print("0");
+        lcd.print(myTime.minute(), DEC);
+      }
 
       buttonState3 = digitalRead(buttonPin3);
       if (buttonState3 == HIGH) {
-        if (timeAdjMode == 0) {
-          minuteToSet++;
-          if (minuteToSet >= 60) {
-            minuteToSet = 0;
-          }
-        } else {
-          hourToSet++;
-          if (hourToSet >= 24) {
-            hourToSet = 0;
-          }
+        int valueToSet = 0;
+        switch (pos) {
+          case 11:
+            valueToSet = myTime.hour() + 1;
+            if (valueToSet > 23) valueToSet = 0;
+            RTC.adjust(DateTime(myTime.year(), myTime.month(), myTime.day(), valueToSet, myTime.minute(), 0));
+            break;
+          case 12:
+            valueToSet = myTime.minute() + 1;
+            if (valueToSet > 59) valueToSet = 0;
+            RTC.adjust(DateTime(myTime.year(), myTime.month(), myTime.day(), myTime.hour(), valueToSet, 0));
+            break;
+          case 13:
+            valueToSet = myTime.day() + 1;
+            if (valueToSet > 31) valueToSet = 0;
+            RTC.adjust(DateTime(myTime.year(), myTime.month(), valueToSet, myTime.hour(), myTime.minute(), 0));
+            break;
+          case 14:
+            valueToSet = myTime.month() + 1;
+            if (valueToSet > 12) valueToSet = 0;
+            RTC.adjust(DateTime(myTime.year(), valueToSet, myTime.day(), myTime.hour(), myTime.minute(), 0));
+            break;
+          case 15:
+            RTC.adjust(DateTime(valueToSet, myTime.month(), myTime.day(), myTime.hour(), myTime.minute(), 0));
+            break;
         }
 
         delay(100);
@@ -596,19 +644,38 @@ void loop() // ПРОГРАММЫй безусловный ЦИКЛ
 
       buttonState2 = digitalRead(buttonPin2);
       if (buttonState2 == HIGH) {
-        if (timeAdjMode == 0) {
-          timeAdjMode = 1;
-        } else {
-          timeAdjMode = 0;
+        int valueToSet = 0;
+        switch (pos) {
+          case 11:
+            valueToSet = myTime.hour() - 1;
+            if (valueToSet < 0) valueToSet = 23;
+            RTC.adjust(DateTime(myTime.year(), myTime.month(), myTime.day(), valueToSet, myTime.minute(), 0));
+            break;
+          case 12:
+            valueToSet = myTime.minute() - 1;
+            if (valueToSet < 0) valueToSet = 59;
+            RTC.adjust(DateTime(myTime.year(), myTime.month(), myTime.day(), myTime.hour(), valueToSet, 0));
+            break;
+          case 13:
+            valueToSet = myTime.day() - 1;
+            if (valueToSet < 0) valueToSet = 31;
+            RTC.adjust(DateTime(myTime.year(), myTime.month(), valueToSet, myTime.hour(), myTime.minute(), 0));
+            break;
+          case 14:
+            valueToSet = myTime.month() - 1;
+            if (valueToSet < 0) valueToSet = 12;
+            RTC.adjust(DateTime(myTime.year(), valueToSet, myTime.day(), myTime.hour(), myTime.minute(), 0));
+            break;
+          case 15:
+            RTC.adjust(DateTime(myTime.year() - 1, myTime.month(), myTime.day(), myTime.hour(), myTime.minute(), 0));
+            break;
         }
 
         delay(100);
       }
-
-      RTC.adjust(DateTime(myTime.year(), myTime.month(), myTime.day(), hourToSet, minuteToSet, 0));
-
       break;
   }
+
   //delay (100);
   //wdt_reset();  // сброс сторожевого таймера
   //wdt_enable(WDTO_1S); // разрешение работы сторожевого таймера с тайм-аутом 1 с
