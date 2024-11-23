@@ -268,7 +268,7 @@ void loop() // ПРОГРАММЫй безусловный ЦИКЛ
       buttonState2 = digitalRead(buttonPin2);
       if (buttonState2 == HIGH) {
         ZD--;
-        delay(100);
+        delay(200);
       }
       if (ZD > 60)  {
         ZD = 0;
@@ -276,7 +276,7 @@ void loop() // ПРОГРАММЫй безусловный ЦИКЛ
       buttonState3 = digitalRead(buttonPin3);
       if (buttonState3 == HIGH) {
         ZD++;
-        delay(100);
+        delay(200);
       }
       if (ZD < 0)  {
         ZD = 60;
@@ -497,7 +497,7 @@ void loop() // ПРОГРАММЫй безусловный ЦИКЛ
       if (buttonState2 == HIGH) {
         ScN = ScN - 25;
 
-        delay(150);
+        delay(200);
         lcd.clear();
       }
       if (ScN < 0)  {
