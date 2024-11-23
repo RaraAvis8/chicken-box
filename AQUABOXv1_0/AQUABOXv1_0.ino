@@ -142,7 +142,7 @@ void loop() // ПРОГРАММЫй безусловный ЦИКЛ
   if (buttonState == HIGH) {
     pos++;
     lcd.clear();
-    delay (250);
+    delay (200);
   }
 
 
@@ -185,7 +185,7 @@ void loop() // ПРОГРАММЫй безусловный ЦИКЛ
       if (buttonState2 == HIGH) {
         RH++;
 
-        delay(100);
+        delay(200);
       }
       if (RH >= 24)  {
         RH = 0;
@@ -194,7 +194,7 @@ void loop() // ПРОГРАММЫй безусловный ЦИКЛ
       if (buttonState3 == HIGH) {
         RM++;
 
-        delay(100);
+        delay(200);
       }
       if (RM >= 60)  {
         RM = 0;
@@ -216,7 +216,7 @@ void loop() // ПРОГРАММЫй безусловный ЦИКЛ
       buttonState2 = digitalRead(buttonPin2);
       if (buttonState2 == HIGH) {
         RD--;
-        delay(100);
+        delay(200);
       }
       if (RD > 60)  {
         RD = 0;
@@ -224,7 +224,7 @@ void loop() // ПРОГРАММЫй безусловный ЦИКЛ
       buttonState3 = digitalRead(buttonPin3);
       if (buttonState3 == HIGH) {
         RD++;
-        delay(100);
+        delay(200);
       }
       if (RD < 0)  {
         RD = 60;
@@ -240,7 +240,7 @@ void loop() // ПРОГРАММЫй безусловный ЦИКЛ
       buttonState2 = digitalRead(buttonPin2);
       if (buttonState2 == HIGH) {
         ZH++;
-        delay(100);
+        delay(200);
       }
       if (ZH >= 24)  {
         ZH = 0;
@@ -248,7 +248,7 @@ void loop() // ПРОГРАММЫй безусловный ЦИКЛ
       buttonState3 = digitalRead(buttonPin3);
       if (buttonState3 == HIGH) {
         ZM++;
-        delay(100);
+        delay(200);
       }
       if (ZM >= 60)  {
         ZM = 0;
@@ -299,7 +299,7 @@ void loop() // ПРОГРАММЫй безусловный ЦИКЛ
       if (buttonState3 == HIGH) {
         PWM_LW_MAX = PWM_LW_MAX + 25;
 
-        delay(150);
+        delay(200);
         lcd.clear();
       }
       if (PWM_LW_MAX > 250)  {
@@ -310,7 +310,7 @@ void loop() // ПРОГРАММЫй безусловный ЦИКЛ
       if (buttonState2 == HIGH) {
         PWM_LW_MAX = PWM_LW_MAX - 25;
 
-        delay(150);
+        delay(200);
         lcd.clear();
       }
       if (PWM_LW_MAX < 0)  {
@@ -361,7 +361,7 @@ void loop() // ПРОГРАММЫй безусловный ЦИКЛ
       if (buttonState3 == HIGH) {
         PWM_LW_MIN = PWM_LW_MIN + 25;
 
-        delay(150);
+        delay(200);
         lcd.clear();
       }
       if (PWM_LW_MIN > 250)  {
@@ -371,7 +371,7 @@ void loop() // ПРОГРАММЫй безусловный ЦИКЛ
       if (buttonState2 == HIGH) {
         PWM_LW_MIN = PWM_LW_MIN - 25;
 
-        delay(150);
+        delay(200);
         lcd.clear();
       }
       if (PWM_LW_MIN < 0)  {
@@ -423,7 +423,7 @@ void loop() // ПРОГРАММЫй безусловный ЦИКЛ
       if (buttonState3 == HIGH) {
         ScD = ScD + 25;
 
-        delay(150);
+        delay(200);
         lcd.clear();
       }
       if (ScD > 250)  {
@@ -434,7 +434,7 @@ void loop() // ПРОГРАММЫй безусловный ЦИКЛ
       if (buttonState2 == HIGH) {
         ScD = ScD - 25;
 
-        delay(150);
+        delay(200);
         lcd.clear();
       }
       if (ScD < 0)  {
@@ -486,7 +486,7 @@ void loop() // ПРОГРАММЫй безусловный ЦИКЛ
       if (buttonState3 == HIGH) {
         ScN = ScN + 25;
 
-        delay(150);
+        delay(200);
         lcd.clear();
       }
       if (ScN > 250)  {
@@ -635,11 +635,11 @@ void loop() // ПРОГРАММЫй безусловный ЦИКЛ
             RTC.adjust(DateTime(myTime.year(), valueToSet, myTime.day(), myTime.hour(), myTime.minute(), 0));
             break;
           case 15:
-            RTC.adjust(DateTime(valueToSet, myTime.month(), myTime.day(), myTime.hour(), myTime.minute(), 0));
+            RTC.adjust(DateTime(valueToSet + 1, myTime.month(), myTime.day(), myTime.hour(), myTime.minute(), 0));
             break;
         }
 
-        delay(100);
+        delay(200);
       }
 
       buttonState2 = digitalRead(buttonPin2);
@@ -671,7 +671,7 @@ void loop() // ПРОГРАММЫй безусловный ЦИКЛ
             break;
         }
 
-        delay(100);
+        delay(200);
       }
       break;
   }
